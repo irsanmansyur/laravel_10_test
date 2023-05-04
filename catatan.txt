@@ -1,0 +1,13 @@
+1. Clone project from "https://github.com/tantangin/laravel_10_test.git"
+2. cmd "git clone "https://github.com/tantangin/laravel_10_test.git"
+3. cmd "cd  laravel_10_test"
+4. setup variabel env name di ".env" database paling perlu.
+5. cmd "php artisan migrate"
+6. cmd "php artisan serve"
+
+
+untuk backend api ,
+1. Input data nasabah "/api/nasabah" method POST
+2. input Transaksi "/api/transaction" method POST
+3. Cek Point Nasabah "/api/nasabah" method GET
+4. report transaction "/api/transaction" method GET
