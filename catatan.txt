@@ -5,6 +5,11 @@
 5. cmd "php artisan migrate"
 6. cmd "php artisan serve"
 
+untuk mengetes melalui web,
+1. silahkan login terlebih dahulu, atau daftar akun
+2. kemudian ke dashboard,
+3. ada Navlink yg mengarah ke Nasabah dan Transaction menu
+
 
 untuk backend api ,
 1. Input data nasabah "/api/nasabah" method POST
