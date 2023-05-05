@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\NasabahController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +35,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/nasabah', [NasabahController::class, 'index'])->name('nasabah.list');
+    Route::get('/nasabah/create', [NasabahController::class, 'create'])->name('nasabah.create');
+    Route::post('/nasabah/create', [NasabahController::class, 'store']);
+    Route::delete('/nasabah/delete/{nasabah}', [NasabahController::class, 'destroy']);
+
+    Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction.list');
+    Route::get('/transaction/create', [TransactionController::class, 'create'])->name('transaction.create');
+    Route::post('/transaction/create', [TransactionController::class, 'store']);
+    Route::delete('/transaction/delete/{transaction}', [TransactionController::class, 'destroy']);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

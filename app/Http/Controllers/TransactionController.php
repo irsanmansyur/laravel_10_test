@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Request;
 
 class TransactionController extends Controller
 {
+    public function create(Request $request)
+    {
+        $nasabahs = Nasabah::get();
+        return inertia("Transaction/Create", ["nasabahs" => $nasabahs]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -21,12 +27,16 @@ class TransactionController extends Controller
             $b->whereAccountId(request("account_id"));
         })->when(request("date_start"), function (Builder $b) {
             $b->where("transaction_date", ">=", Carbon::parse(request("date_start")));
-        })->where("transaction_date", "<=", Carbon::parse($date_end))->paginate(19);
-        return response()->json([
-            "message" => "List Transaction",
-            "data" => $transactions->toArray()['data'],
-            "meta" => ["limit" => 19]
-        ]);
+        })->where("transaction_date", "<=", Carbon::parse($date_end))
+            ->with("nasabah")->paginate(19);
+        if (!request()->is('inertia*') && request()->expectsJson())
+            return response()->json([
+                "message" => "List Transaction",
+                "data" => $transactions->toArray()['data'],
+                "meta" => ["limit" => 19]
+            ]);
+
+        return inertia("Transaction/List", ['transactions' => $transactions]);
     }
 
     /**
@@ -41,10 +51,12 @@ class TransactionController extends Controller
         $points = $this->hitungPoint($data['description'], $data['amount']);
         if ($points > 0) Nasabah::find($data['account_id'])->increment('points', $points);
 
-        return response()->json([
-            "message" =>  "Transaction Create",
-            "data" =>  $transaction
-        ]);
+        if (!request()->is('inertia*') && request()->expectsJson())
+            return response()->json([
+                "message" =>  "Transaction Create",
+                "data" =>  $transaction
+            ]);
+        return to_route("transaction.list")->with("success", "Transaction berhasil");
     }
 
     protected function hitungPoint(string $description, int $amount): int
@@ -82,8 +94,12 @@ class TransactionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Transaction $transaction)
     {
-        //
+        $transaction->delete();
+        //  Proses pengurangan  points
+        // $points = $this->hitungPoint($transaction['description'], $transaction['amount']);
+        // if ($points > 0) Nasabah::find($transaction['account_id'])->decrement('points', $points);
+        return to_route("transaction.list")->with("success", "Transaction deleted");
     }
 }
